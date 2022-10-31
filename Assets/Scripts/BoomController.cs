@@ -1,26 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BoomController : MonoBehaviour
 {
-    public float TimeToExplosion;
-    public float Power;
-    public float Radius;
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private float _timeToExplosion;    
+    [SerializeField] private float _power;
+    [SerializeField] private float _radius;
+    private float _time = 0f;
+       
+    private void FixedUpdate()
     {
-        
-    }
+        _time -= Time.deltaTime;
 
-    // Update is called once per frame
-    void Update()
-    {
-        TimeToExplosion = -Time.deltaTime;
-
-        if (TimeToExplosion <= 0)
+        if (_time <= 0)
         {
-            Boom();
+            Boom();            
         }
     }
 
@@ -30,15 +23,16 @@ public class BoomController : MonoBehaviour
 
         foreach (Rigidbody b in blocks)
         {
-            if (Vector3.Distance(transform.position, b.transform.position) < Radius)
+            if (Vector3.Distance(transform.position, b.transform.position) < _radius)
             {
                 Vector3 direction = b.transform.position - transform.position;
 
-                b.AddForce(direction.normalized * Power *
-                    (Radius - Vector3.Distance(transform.position, b.transform.position)),
+                b.AddForce((_radius - Vector3.Distance(transform.position, b.transform.position))
+                    * _power * direction.normalized,
                     ForceMode.Impulse);
             }
         }
-        TimeToExplosion = 3;
+        _time = _timeToExplosion;
+
     }
 }
